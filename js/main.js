@@ -26,7 +26,9 @@ let dealer = {
 /*----- cached element references -----*/
 
 /*----- event listeners -----*/
-
+document.getElementById('new-game').addEventListener('click', initalize);
+document.getElementById('hit').addEventListener('click', hit);
+document.getElementById('stand').addEventListener('click', stand);
 /*----- functions -----*/
 
 function initalize () {
@@ -34,7 +36,16 @@ function initalize () {
 }
 
 function render () {
-    
+
+}
+
+
+function hit () {
+
+}
+
+function stand() {
+
 }
     //make function that calculates value of player and dealer cards. Include logic to decide if an Ace is worth 11 or 1.
 

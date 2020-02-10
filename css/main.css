@@ -6,3 +6,28 @@ h1 {
     color: white;
     text-align: center;
 }
+
+h3 {
+    color: white;
+}
+
+#dealerCardsTotal {
+    color: white;
+    font-size: x-large;
+} 
+
+#playerCardsTotal {
+    color: white;
+    font-size: x-large;
+}
+
+button {
+  border: none;
+  color: white;
+  background-color: blue;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flexbox;
+  font-size: 16px;
+}
