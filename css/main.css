@@ -31,3 +31,15 @@ button {
   display: inline-flexbox;
   font-size: 16px;
 }
+
+#start-new-game {
+    background-color: cornflowerblue;
+}
+
+#stand {
+    background-color: crimson;
+}
+
+#new-deal {
+    background-color: darkgreen;
+}
