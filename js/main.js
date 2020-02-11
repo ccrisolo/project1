@@ -1,8 +1,7 @@
 /*----- constants -----*/
     //create variables that contains an array of suits and values of all 52 cards
-//let suits = ['Hearts', 'Spades', 'Clubs', 'Diamonds'];
-//let values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
-let cards = [
+
+let currentDeck = [
     {value: 2, face:"c02"},
     {value: 2, face:"s02"},
     {value: 2, face:"h02"},
@@ -66,66 +65,98 @@ let cardPulled = 0;
 
 //create objects representing player hand and dealer hand
 
-let playerOne = {
-    cardsDelt: [],
+let player = {
+    currentHand: [],
     cardTotal: 0,
-    playerCash: 100,
+    
 }
 
 let dealer = {
-    cardsDelt: [],
-    cardTotal: 0,
+    currentHand: [],
+    cardTotal: 0
 }
 /*----- cached element references -----*/
-
+let cardsInPlay;
+let msgEl = document.querySelector('h1');
+const dealBtn = document.getElementById('new-deal');
+const hitBtn = document.getElementById('hit')
+let playerCurrentHand = document.getElementById('playerCurrentHand')
+let dealerCurrentHand = document.getElementById('dealerCurrentHand')
 
 /*----- event listeners -----*/
-document.getElementById('start-new-game').addEventListener('click', initalize);
 document.getElementById('hit').addEventListener('click', hit);
 document.getElementById('stand').addEventListener('click', stand);
-document.getElementById('new-deal').addEventListener('click', newDeal)
+
 /*----- functions -----*/
+initalize()
 
-function initalize () {
-// this function will start the game
+
+function initalize() {
+    // 1)give 2 cards to player
+    dealPlayerCards()
+    dealPlayerCards()
+    // 2)give 2 cards to dealer
+    dealDealerCards()
+    dealDealerCards()
+    // 3)render selected cards 
+    render()
 }
 
-function deal() {
-//this function will deal 2 cards face up to the player and 1 card face up 1 card down to the dealer
+function dealPlayerCards() {
+    // chooses random card from current deck
+    let card = currentDeck[Math.floor(Math.random() * currentDeck.length)];
+    // finds index of card that was just chosen
+    const cardIdx = currentDeck.findIndex((e,i) => {
+        return e == card
+    })
+    // splice removes card from current deck (by index, # removed(below is 1))
+    currentDeck.splice(cardIdx,1)
+    // adds card to player's current hand
+    player.currentHand.push(card)
+
 }
 
-function render () {
-//this function will render the cards when dealt
+function dealDealerCards() {
+    //  follow same logic of player card function above ^
+    let card = currentDeck[Math.floor(Math.random() * currentDeck.length)];
+    const cardIdx = currentDeck.findIndex((e, i) => {
+        return e == card
+    })
+
+    currentDeck.splice(cardIdx, 1);
+    dealer.currentHand.push(card);
+
+
 }
 
-function bet () {
-    //this function will allow player to bet money 
-}
+function render() {
+    console.log("PLAYER HAND: ", player.currentHand)
+    for(let i = 0; i < player.currentHand.length; i++) {
+        var div = document.createElement('div');
+        let faceVal = player.currentHand[i].face
+        div.classList.add('card',faceVal);
+        // div.innerHTML = 'test'
+        playerCurrentHand.appendChild(div)
+    }
 
+    var div = document.createElement('div'); 
+    for(let i = 0; i < dealer.currentHand.length; i++) {
+        let faceVal = dealer.currentHand[i].face
+        div.classList.add('card',faceVal);
+        // div.innerHTML = 'test'
+        dealerCurrentHand.appendChild(div)
+    }
 
-function hit () {
-// this function will deal one card 
-}
-
-function stand() {
-//this function will keep player with current cards 
-}
-
-function checkBust() {
-    //this function will check if player has gone over 21
-}
-
-
-function winOrLose() {
-//this function will compare player cardTotal to dealerCardTotal and determine who won the hand.
-//include logic for value of Ace being worth 11 or 1  
-}
-
-
+    //1)render selected cards to player
     
-function newDeal() {
-    //this function will shuffle and deal out new cards while keeping players current money total
+    //2)render selected cards to dealer
 }
+
+
+
+
+
+
 
 
 

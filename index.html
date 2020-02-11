@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/card-deck-css/css/cardstarter.css">
     <title>BlackJack</title>
     <script
  	src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -15,26 +16,29 @@
 
 </head>
 <body>
-    <h1>BlackJack</h1>
+    <header>BlackJack</header>
+    <h1></h1>
     <section id='table'>
-        <div class="card d02"></div>
         <div id='dealerCards'></div>
         <div id='dealerCardsTotal'>Dealer card total:</div>
+        <div id="dealerCurrentHand"></div>
         <br>
         
         <div id='playerCards'></div>
         <div id='playerCardsTotal'>Player card total:</div>
-        <div id='playerMoney'></div>
-        <h3>Place your bet:</h3>
-        <input type="number" id='bet' value='10' min='1'/>
+        <div id='playerCurrentHand'>
+            
+        </div>
+        
+
         <br>
     </section>
 <br>
 
-    <button id='start-new-game'>Start New Game</button>
+    <button id='new-deal'>Deal</button>
     <button id='hit'>Hit</button>
     <button id='stand'>Stand</button>
-    <button id='new-deal'>New Deal</button>
+
     
     <script src=js/main.js></script>
 </body>
