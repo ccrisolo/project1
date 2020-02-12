@@ -89,9 +89,7 @@ let dealerCardTotal = document.getElementById('dealerCardsTotal')
 
 // dealBtn.addEventListener('click', dealCards)
 hitBtn.addEventListener('click', hit)
-standBtn.addEventListener('click', (stand) => {
-    console.log('stand')
-})
+standBtn.addEventListener('click', stand)
 
 
 /*----- functions -----*/
@@ -100,6 +98,19 @@ initalize()
 
 function initalize() {
     dealBtn.addEventListener('click', dealCards)
+}
+function dealCards() {
+    // 1)give 2 cards to player
+    dealPlayerCards()
+    dealPlayerCards()
+    // 2)give 2 cards to dealer, 1 face down to start
+    dealDealerCards()
+    dealDealerCards()
+    // 3)render selected cards 
+    render()
+    //removes deal button function after initial click
+    dealBtn.removeEventListener('click', dealCards, false)
+    // winOrLose()
 }
 
 function dealPlayerCards() {
@@ -117,19 +128,6 @@ function dealPlayerCards() {
 
 }
 
-function dealCards() {
-    // 1)give 2 cards to player
-    dealPlayerCards()
-    dealPlayerCards()
-    // 2)give 2 cards to dealer, 1 face down to start
-    dealDealerCards()
-    dealDealerCards()
-    // 3)render selected cards 
-    render()
-    //removes deal button function after initial click
-    dealBtn.removeEventListener('click', dealCards, false)
-    // winOrLose()
-}
 
 function hit() {
     dealPlayerCards()
@@ -174,15 +172,15 @@ function render() {
             let faceVal = dealer.currentHand[i].face
             //adds a class to the created element
             div.classList.add('card', faceVal);
-            console.log(div)
+            
             //places or appends the image to the created element in()
             dealerCurrentHand.appendChild(div)
         } else {
-            console.log("HIT ELSE")
+            
             let div = document.createElement('div')
             //adds a class to the created element
             div.classList.add('card', 'back-red')
-            console.log("div: ", div)
+            
             //places or appends the image to the created element in()
             dealerCurrentHand.appendChild(div)
         }
@@ -190,6 +188,7 @@ function render() {
     calcPlayerTotal()
     calcDealerTotal()
     winOrLose()
+    
 }
 
 function calcPlayerTotal() {
@@ -210,14 +209,56 @@ function calcDealerTotal() {
     total += dealer.currentHand[1].value;
     dealerCardTotal.innerHTML = `Dealer Total: ${total}`;
     // }
+    dealer.cardTotal = total
 }
+
+function stand(){
+    //this loop says while dealercurrenthand has a last child..next line..
+    while (dealerCurrentHand.lastChild) {
+        //remove the dealercurrenthand last child..
+        //does this for both last childs then breaks out of loop and goes into for loop below
+        dealerCurrentHand.removeChild(dealerCurrentHand.lastChild)
+        debugger
+    }
+    //this loops through the cards that were delt in while loop above and...next comment
+    for (let i = 0; i < dealer.currentHand.length; i++){
+            debugger
+    
+        //creates specified elemtent in HTML (e.g. div)
+       
+            var div = document.createElement('div');
+            //faceVal variable created to hold 
+            let faceVal = dealer.currentHand[i].face
+            //adds a class to the created element
+            div.classList.add('card', faceVal);
+            
+            //places or appends the image to the created element in()
+            dealerCurrentHand.appendChild(div)
+        
+    }
+    
+}
+
 
 function winOrLose() {
     if (player.cardTotal > 21) {
-        console.log('bust')
-        return msgEl.innerHTML = 'Bust! Sorry dealer wins:('
+        return msgEl.innerHTML = 'Bust! Sorry dealer wins'
+    } else if (player.cardTotal > 21 && player.currentHand ){
+
     }
+     
+    
 }
+
+//win lose conditions:
+//if player stands, dealer flips face down card. 
+//if dealer hand is <= 16, dealer must hit.
+//if dealer total is >= 17 && <= 21, dealer stands.
+
+//if dealer total > 21, player wins
+
+// ACE LOGIC: if player card total > 21 and player current hand contains an Ace then Ace value -10.
+
 
 
 
