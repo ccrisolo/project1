@@ -62,6 +62,7 @@ let cardBack = { face: "card.back-red" }
 //track cards pulled from deck
 let cardPulled = 0;
 
+
 //create objects representing player hand and dealer hand
 
 let player = {
@@ -75,7 +76,6 @@ let dealer = {
     cardTotal: 0
 }
 /*----- cached element references -----*/
-let cardsInPlay;
 let msgEl = document.querySelector('h1')
 const dealBtn = document.getElementById('new-deal')
 const hitBtn = document.getElementById('hit')
@@ -87,12 +87,8 @@ let dealerCardTotal = document.getElementById('dealerCardsTotal')
 
 /*----- event listeners -----*/
 
-dealBtn.addEventListener('click', (dealCards) => {
-    console.log('deal')
-})
-hitBtn.addEventListener('click', (hit) => {
-    console.log('hit-me')
-})
+// dealBtn.addEventListener('click', dealCards)
+hitBtn.addEventListener('click', hit)
 standBtn.addEventListener('click', (stand) => {
     console.log('stand')
 })
@@ -103,14 +99,7 @@ initalize()
 
 
 function initalize() {
-    // 1)give 2 cards to player
-    dealPlayerCards()
-    dealPlayerCards()
-    // 2)give 2 cards to dealer, 1 face down to start
-    dealDealerCards()
-    dealDealerCards()
-    // 3)render selected cards 
-    render()
+    dealBtn.addEventListener('click', dealCards)
 }
 
 function dealPlayerCards() {
@@ -129,7 +118,22 @@ function dealPlayerCards() {
 }
 
 function dealCards() {
+    // 1)give 2 cards to player
+    dealPlayerCards()
+    dealPlayerCards()
+    // 2)give 2 cards to dealer, 1 face down to start
+    dealDealerCards()
+    dealDealerCards()
+    // 3)render selected cards 
+    render()
+    //removes deal button function after initial click
+    dealBtn.removeEventListener('click', dealCards, false)
+    // winOrLose()
+}
 
+function hit() {
+    dealPlayerCards()
+    render()
 }
 
 function dealDealerCards() {
@@ -141,13 +145,19 @@ function dealDealerCards() {
 
     currentDeck.splice(cardIdx, 1);
     dealer.currentHand.push(card);
-
-
 }
 
 
+
 function render() {
-    // console.log("PLAYER HAND: ", player.currentHand)
+    //this while loop wipes previous array, repopulates the array + 1 card
+    while (playerCurrentHand.lastChild) {
+        playerCurrentHand.removeChild(playerCurrentHand.lastChild)
+    }
+    while (dealerCurrentHand.lastChild) {
+        dealerCurrentHand.removeChild(dealerCurrentHand.lastChild)
+    }
+
     for (let i = 0; i < player.currentHand.length; i++) {
         var div = document.createElement('div');
         let faceVal = player.currentHand[i].face
@@ -177,31 +187,37 @@ function render() {
             dealerCurrentHand.appendChild(div)
         }
     }
-    console.log(dealer.currentHand)
-
     calcPlayerTotal()
     calcDealerTotal()
+    winOrLose()
 }
 
 function calcPlayerTotal() {
     let total = 0
-    for(let i = 0; i < player.currentHand.length; i++){
+    for (let i = 0; i < player.currentHand.length; i++) {
         total += player.currentHand[i].value;
-        playerCardTotal.innerHTML = total;
-        
+        // console.log(player.cardTotal)
     }
-    console.log("TOTAL FOR PLAYER: ", total)
+    player.cardTotal = total
+    playerCardTotal.innerHTML = `Player Total: ${player.cardTotal}`;
 }
 
-function calcDealerTotal(){
+
+function calcDealerTotal() {
     let total = 0
     //if 
-    for (let i = 0; i < dealer.currentHand.length; i++) {
-        total += dealer.currentHand[i].value;
-        dealerCardTotal.innerHTML = total;
+    // for (let i = 0; i < dealer.currentHand.length; i++) {
+    total += dealer.currentHand[1].value;
+    dealerCardTotal.innerHTML = `Dealer Total: ${total}`;
+    // }
+}
+
+function winOrLose() {
+    if (player.cardTotal > 21) {
+        console.log('bust')
+        return msgEl.innerHTML = 'Bust! Sorry dealer wins:('
     }
 }
-console.log(dealer.currentHand[1].value)
 
 
 
