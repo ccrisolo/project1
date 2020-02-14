@@ -1,6 +1,4 @@
 /*----- constants -----*/
-
-//52 objects in an array for the deck of cards
 let currentDeck = [
     { value: 2, face: "c02" },
     { value: 2, face: "s02" },
@@ -59,25 +57,20 @@ let currentDeck = [
 let cardBack = { face: "card.back-red" }
 
 /*----- app's state (variables) -----*/
-//track cards pulled from deck
-let cardPulled = 0;
-
-
-//create objects representing player hand and dealer hand
-
 let player = {
     currentHand: [],
     cardTotal: 0,
 
 }
-
 let dealer = {
     currentHand: [],
     cardTotal: 0
 }
+
 /*----- cached element references -----*/
 let msgEl = document.querySelector('h1')
-const dealBtn = document.getElementById('new-deal')
+const newGameBtn = document.getElementById('new-game')
+const dealBtn = document.getElementById('deal')
 const hitBtn = document.getElementById('hit')
 const standBtn = document.getElementById('stand')
 let playerCurrentHand = document.getElementById('playerCurrentHand')
@@ -85,57 +78,49 @@ let dealerCurrentHand = document.getElementById('dealerCurrentHand')
 let playerCardTotal = document.getElementById('playerCardsTotal')
 let dealerCardTotal = document.getElementById('dealerCardsTotal')
 
+
 /*----- event listeners -----*/
-
-// dealBtn.addEventListener('click', dealCards)
-hitBtn.addEventListener('click', hit)
+// hitBtn.addEventListener('click', hit)
 standBtn.addEventListener('click', stand)
-
+newGameBtn.addEventListener('click', newGame)
 
 /*----- functions -----*/
-initalize()
+initialize()
 
 
-function initalize() {
+function initialize() {
     dealBtn.addEventListener('click', dealCards)
 }
 function dealCards() {
-    // 1)give 2 cards to player
     dealPlayerCards()
     dealPlayerCards()
-    // 2)give 2 cards to dealer, 1 face down to start
+    
     dealDealerCards()
     dealDealerCards()
-    // 3)render selected cards 
+    
     render()
-    //removes deal button function after initial click
+    
+    hitBtn.addEventListener('click', hit)
     dealBtn.removeEventListener('click', dealCards, false)
-    // winOrLose()
 }
 
 function dealPlayerCards() {
-    // chooses random card from current deck
     let card = currentDeck[Math.floor(Math.random() * currentDeck.length)];
-    // finds index of card that was just chosen
     const cardIdx = currentDeck.findIndex((e, i) => {
-        //returns card at index value
         return e == card
     })
-    // splice removes card from current deck (by index, amount to be removed(below is 1))
+    
     currentDeck.splice(cardIdx, 1)
-    // adds card to player's current hand
     player.currentHand.push(card)
 
 }
-
-
+    
 function hit() {
     dealPlayerCards()
     render()
 }
 
 function dealDealerCards() {
-    //  follow same logic of player card function above ^
     let card = currentDeck[Math.floor(Math.random() * currentDeck.length)];
     const cardIdx = currentDeck.findIndex((e, i) => {
         return e == card
@@ -144,11 +129,8 @@ function dealDealerCards() {
     currentDeck.splice(cardIdx, 1);
     dealer.currentHand.push(card);
 }
-
-
-
+    
 function render() {
-    //this while loop wipes previous array, repopulates the array + 1 card
     while (playerCurrentHand.lastChild) {
         playerCurrentHand.removeChild(playerCurrentHand.lastChild)
     }
@@ -163,113 +145,223 @@ function render() {
         playerCurrentHand.appendChild(div)
     }
 
-    //loops through the array to find 
     for (let i = 0; i < dealer.currentHand.length; i++) {
-        //creates specified elemtent in HTML (e.g. div)
         if (i > 0) {
             var div = document.createElement('div');
-
             let faceVal = dealer.currentHand[i].face
-            //adds a class to the created element
             div.classList.add('card', faceVal);
-            
-            //places or appends the image to the created element in()
             dealerCurrentHand.appendChild(div)
         } else {
-            
             let div = document.createElement('div')
-            //adds a class to the created element
             div.classList.add('card', 'back-red')
-            
-            //places or appends the image to the created element in()
             dealerCurrentHand.appendChild(div)
         }
     }
     calcPlayerTotal()
     calcDealerTotal()
-    winOrLose()
-    
+    aceLogicPlayer()
+    aceLogicDealer()
+    checkForBust()
 }
-
+        
 function calcPlayerTotal() {
     let total = 0
     for (let i = 0; i < player.currentHand.length; i++) {
         total += player.currentHand[i].value;
-        // console.log(player.cardTotal)
+        
     }
     player.cardTotal = total
-    playerCardTotal.innerHTML = `Player Total: ${player.cardTotal}`;
+    playerCardTotal.textContent = `Player Total: ${player.cardTotal}`;
+    aceLogicPlayer()
 }
 
 
 function calcDealerTotal() {
     let total = 0
-    //if 
-    // for (let i = 0; i < dealer.currentHand.length; i++) {
     total += dealer.currentHand[1].value;
-    dealerCardTotal.innerHTML = `Dealer Total: ${total}`;
-    // }
+    dealerCardTotal.textContent = `Dealer Total: ${total}`;
+    
     dealer.cardTotal = total
+    aceLogicDealer()
 }
 
-function stand(){
-    //this loop says while dealercurrenthand has a last child..next line..
+function calcRealDealerTotal() {
+    dealer.cardTotal = 0
+    for (let i = 0; i < dealer.currentHand.length; i++) {
+        dealer.cardTotal += dealer.currentHand[i].value;
+    } 
+    aceLogicDealer()
+    return dealer.cardTotal
+}
+    
+function stand() {
+    let dealerTotal = 0
     while (dealerCurrentHand.lastChild) {
-        //remove the dealercurrenthand last child..
-        //does this for both last childs then breaks out of loop and goes into for loop below
         dealerCurrentHand.removeChild(dealerCurrentHand.lastChild)
-        debugger
     }
-    //this loops through the cards that were delt in while loop above and...next comment
-    for (let i = 0; i < dealer.currentHand.length; i++){
-            debugger
+    for (let i = 0; i < dealer.currentHand.length; i++) {
+        var div = document.createElement('div');
+        let faceVal = dealer.currentHand[i].face
+        div.classList.add('card', faceVal);
+        dealerCurrentHand.appendChild(div)
+    }
+
+    dealerTotal += dealer.currentHand[0].value + dealer.currentHand[1].value;
+    dealerCardTotal.innerHTML = `Dealer Total: ${dealerTotal}`;
+    hitBtn.removeEventListener('click', hit, false)
+    standBtn.removeEventListener('click', stand, false)
     
-        //creates specified elemtent in HTML (e.g. div)
-       
-            var div = document.createElement('div');
-            //faceVal variable created to hold 
-            let faceVal = dealer.currentHand[i].face
-            //adds a class to the created element
-            div.classList.add('card', faceVal);
+        while (dealerTotal <= 16) {
+            dealDealerCards()
+    
+            showDealerHand()
+            dealerTotal = calcRealDealerTotal()
+        }
+        if (dealerTotal >= 17) {
+            dealerCardTotal.innerHTML = `Dealer Total: ${dealerTotal}`;
             
-            //places or appends the image to the created element in()
-            dealerCurrentHand.appendChild(div)
+            dealerTotal = calcRealDealerTotal()
+            aceLogicDealer()
+            checkForBust()
+            winOrLose()
+        }
+}
+
+function showDealerHand() {
+    while (dealerCurrentHand.lastChild) {
+        dealerCurrentHand.removeChild(dealerCurrentHand.lastChild)
+    }
+    for (let i = 0; i < dealer.currentHand.length; i++) {
+        var div = document.createElement('div');
+        let faceVal = dealer.currentHand[i].face
+        div.classList.add('card', faceVal);
+        dealerCurrentHand.appendChild(div)
+    }
+    dealerCardTotal.innerHTML = `Dealer Total: ${calcRealDealerTotal()}`;
+}
         
+function aceLogicPlayer() {
+    if(player.cardTotal > 21) {
+        for(let i = 0; i < player.currentHand.length; i++){
+            if(player.currentHand[i].value === 11){
+                player.cardTotal -= 10;
+                playerCardTotal.textContent = `Player Total: ${player.cardTotal}`;
+            }
+        }
     }
+}   
     
+function aceLogicDealer() {
+    let aceCount = 0
+    for(let i = 0; i < dealer.currentHand.length; i++){
+        if (dealer.currentHand[i].value === 11){
+                aceCount += 1
+                if(dealer.cardTotal > 21) {
+                    dealer.cardTotal -= 10;
+                }
+            }
+            if (aceCount > 1 && dealer.cardTotal < 12) {
+                dealer.cardTotal -= 10;
+        }
+    }
 }
+    
 
-
+function checkForBust(){
+    if(player.cardTotal > 21) {
+        msgEl.textContent = "YOU BUSTED! SORRY, DEALER WINS"
+    }
+    if(dealer.cardTotal > 21) {
+        msgEl.textContent = "DEALER BUSTED! YOU WIN!"
+    }
+}
+    
 function winOrLose() {
-    if (player.cardTotal > 21) {
-        return msgEl.innerHTML = 'Bust! Sorry dealer wins'
-    } else if (player.cardTotal > 21 && player.currentHand ){
-
-    }
-     
+    if ((dealer.cardTotal > player.cardTotal) && (dealer.cardTotal <= 21)) {
+        msgEl.textContent = "DEALER WINS"
+    } else if ((player.cardTotal > dealer.cardTotal) && (player.cardTotal <= 21)) {
+        msgEl.textContent = "YOU WIN!"
+    } else if ((player.cardTotal === dealer.cardTotal) && (player.cardTotal <= 21) && (dealer.cardTotal <= 21)) {
+        msgEl.textContent = "PUSH"
+    }   
     
 }
 
-//win lose conditions:
-//if player stands, dealer flips face down card. 
-//if dealer hand is <= 16, dealer must hit.
-//if dealer total is >= 17 && <= 21, dealer stands.
+function newGame() {
+    console.log("HITINGs")
+    document.location.reload(false);
+}
+    
 
-//if dealer total > 21, player wins
+    
+    
+        
 
-// ACE LOGIC: if player card total > 21 and player current hand contains an Ace then Ace value -10.
+        
 
+        
+        
 
-
-
-
-
-
-
-
-
+        
 
 
 
+            
+
+            
+
+            
+
+            
 
 
+
+
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // if(player.cardTotal > 21 && player.currentHand[i].value{
+        // return ace === 11; 
+    // })){
+        // player.cardTotal -= 11;
+        // // msgEl.textContent = "YOU BUSTED, DEALER WINS!"
+        // console.log(player.cardTotal);
+        // return player.cardTotal;
+    //fix 
+    //win lose conditions:
+    //if player stands, dealer flips face down card. 
+    //if dealer hand is <= 16, dealer must hit.
+    //if dealer total is >= 17 && <= 21, dealer stands.
+    
+    //if dealer total > 21, player wins
+    
+    // ACE LOGIC: if player card total > 21 and player current hand contains an Ace then Ace value -10.
+    

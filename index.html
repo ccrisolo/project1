@@ -11,34 +11,43 @@
  	src="https://code.jquery.com/jquery-3.2.1.min.js"
  	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
      crossorigin="anonymous"></script>
+     <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+        </style>
      
 
 
 </head>
 <body>
-    <header>BlackJack</header>
-    <h1></h1>
+    <header></header>
+    <h1 id='Blackjack'>BLACKJACK</h1>
+    
+
     <section id='table'>
-        <div id='dealerCards'></div>
-        <div id='dealerCardsTotal'>Dealer card total:</div>
-        <div id="dealerCurrentHand"></div>
-        <br>
-        
-        <div id='playerCards'></div>
-        <div id='playerCardsTotal'>Player card total:</div>
-        <div id='playerCurrentHand'>
-            
+        <div class='hand'>
+            <div id='dealerCards'></div>
+            <div id='dealerCardsTotal'>Dealer card total:</div>
+            <div id="dealerCurrentHand"></div>
+        </div>
+
+       <div class='hand'> 
+            <div id='playerCards'></div>
+            <div id='playerCardsTotal'>Player card total:</div>
+            <div id='playerCurrentHand'></div>
+           
         </div>
         
 
         <br>
     </section>
 <br>
-
-    <button id='new-deal'>Deal</button>
-    <button id='hit'>Hit</button>
-    <button id='stand'>Stand</button>
-
+<h2>Press Deal to Begin</h2>
+    <div class='buttons'>
+        <button id='deal'>Deal</button>
+        <button id='hit'>Hit</button>
+        <button id='stand'>Stand</button>
+        <button id='new-game'>New Game</button>
+    </div>
     
     <script src=js/main.js></script>
 </body>
