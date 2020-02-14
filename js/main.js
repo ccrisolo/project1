@@ -246,8 +246,8 @@ function showDealerHand() {
 }
 
 function aceLogicPlayer() {
-    if (player.acePlayed === false) {
-        if (player.cardTotal > 21) {
+    if (player.cardTotal > 21) {
+        if (player.acePlayed === false) {
             for (let i = 0; i < player.currentHand.length; i++) {
                 if (player.currentHand[i].value === 11) {
                     player.cardTotal -= 10;
@@ -308,11 +308,17 @@ function newGame() {
 
 
 
- //Pseudocode:       
+//Pseudocode:       
 //When game starts, gameboard is empty
 //When user clicks deal, 2 cards dealt to player face up and 2 cards are dealt to dealer 1 face up and other face down
 //Depending on how close player is to 21, player will hit or stand
+//If player gets 21 on opening deal, a 'Blackjack' message appears and player wins
 //Player is dealt 1 card face up when hit button is clicked
+//If player goes over 21, 'Player bust, dealer wins' message appears
 //When player clicks stand button, dealer will take turn
 //If dealer card total is 16 or less, dealer must take 1 card
-//
+//If dealer card total is 17 or more, dealer must stand
+//If dealer goes over 21, 'player wins' message appears
+//if dealer and player tie, then 'Push' message appears
+//All buttons except the New Game button will be disabled whenever a result message appears
+//New game button resets the board and removes all card played
