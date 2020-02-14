@@ -60,6 +60,7 @@ let cardBack = { face: "card.back-red" }
 let player = {
     currentHand: [],
     cardTotal: 0,
+    acePlayed: false
 
 }
 let dealer = {
@@ -94,12 +95,15 @@ function initialize() {
 function dealCards() {
     dealPlayerCards()
     dealPlayerCards()
-    
     dealDealerCards()
     dealDealerCards()
-    
+
     render()
-    
+    if (player.cardTotal === 21) {
+        msgEl.textContent = "YOU GOT BLACKJACK!"
+        btn.style.pointerEvents = "none"
+    }
+
     hitBtn.addEventListener('click', hit)
     dealBtn.removeEventListener('click', dealCards, false)
 }
@@ -109,12 +113,12 @@ function dealPlayerCards() {
     const cardIdx = currentDeck.findIndex((e, i) => {
         return e == card
     })
-    
+
     currentDeck.splice(cardIdx, 1)
     player.currentHand.push(card)
 
 }
-    
+
 function hit() {
     dealPlayerCards()
     render()
@@ -129,7 +133,7 @@ function dealDealerCards() {
     currentDeck.splice(cardIdx, 1);
     dealer.currentHand.push(card);
 }
-    
+
 function render() {
     while (playerCurrentHand.lastChild) {
         playerCurrentHand.removeChild(playerCurrentHand.lastChild)
@@ -163,14 +167,15 @@ function render() {
     aceLogicDealer()
     checkForBust()
 }
-        
+
 function calcPlayerTotal() {
     let total = 0
     for (let i = 0; i < player.currentHand.length; i++) {
         total += player.currentHand[i].value;
-        
+
     }
-    player.cardTotal = total
+    if(player.acePlayed === true) player.cardTotal -= 10;
+    player.cardTotal = total;
     playerCardTotal.textContent = `Player Total: ${player.cardTotal}`;
     aceLogicPlayer()
 }
@@ -180,7 +185,7 @@ function calcDealerTotal() {
     let total = 0
     total += dealer.currentHand[1].value;
     dealerCardTotal.textContent = `Dealer Total: ${total}`;
-    
+
     dealer.cardTotal = total
     aceLogicDealer()
 }
@@ -189,11 +194,11 @@ function calcRealDealerTotal() {
     dealer.cardTotal = 0
     for (let i = 0; i < dealer.currentHand.length; i++) {
         dealer.cardTotal += dealer.currentHand[i].value;
-    } 
+    }
     aceLogicDealer()
     return dealer.cardTotal
 }
-    
+
 function stand() {
     let dealerTotal = 0
     while (dealerCurrentHand.lastChild) {
@@ -210,21 +215,21 @@ function stand() {
     dealerCardTotal.innerHTML = `Dealer Total: ${dealerTotal}`;
     hitBtn.removeEventListener('click', hit, false)
     standBtn.removeEventListener('click', stand, false)
-    
-        while (dealerTotal <= 16) {
-            dealDealerCards()
-    
-            showDealerHand()
-            dealerTotal = calcRealDealerTotal()
-        }
-        if (dealerTotal >= 17) {
-            dealerCardTotal.innerHTML = `Dealer Total: ${dealerTotal}`;
-            
-            dealerTotal = calcRealDealerTotal()
-            aceLogicDealer()
-            checkForBust()
-            winOrLose()
-        }
+
+    while (dealerTotal <= 16) {
+        dealDealerCards()
+
+        showDealerHand()
+        dealerTotal = calcRealDealerTotal()
+    }
+    if (dealerTotal >= 17) {
+        dealerCardTotal.innerHTML = `Dealer Total: ${dealerTotal}`;
+
+        dealerTotal = calcRealDealerTotal()
+        aceLogicDealer()
+        checkForBust()
+        winOrLose()
+    }
 }
 
 function showDealerHand() {
@@ -239,129 +244,75 @@ function showDealerHand() {
     }
     dealerCardTotal.innerHTML = `Dealer Total: ${calcRealDealerTotal()}`;
 }
-        
+
 function aceLogicPlayer() {
-    if(player.cardTotal > 21) {
-        for(let i = 0; i < player.currentHand.length; i++){
-            if(player.currentHand[i].value === 11){
-                player.cardTotal -= 10;
-                playerCardTotal.textContent = `Player Total: ${player.cardTotal}`;
-            }
-        }
-    }
-}   
-    
-function aceLogicDealer() {
-    let aceCount = 0
-    for(let i = 0; i < dealer.currentHand.length; i++){
-        if (dealer.currentHand[i].value === 11){
-                aceCount += 1
-                if(dealer.cardTotal > 21) {
-                    dealer.cardTotal -= 10;
+    if (player.acePlayed === false) {
+        if (player.cardTotal > 21) {
+            for (let i = 0; i < player.currentHand.length; i++) {
+                if (player.currentHand[i].value === 11) {
+                    player.cardTotal -= 10;
+                    player.acePlayed = true;
+                    playerCardTotal.textContent = `Player Total: ${player.cardTotal}`;
                 }
             }
-            if (aceCount > 1 && dealer.cardTotal < 12) {
+        }
+    } 
+}
+
+function aceLogicDealer() {
+    let aceCount = 0
+    for (let i = 0; i < dealer.currentHand.length; i++) {
+        if (dealer.currentHand[i].value === 11) {
+            aceCount += 1
+            if (dealer.cardTotal > 21) {
                 dealer.cardTotal -= 10;
+            }
+        }
+        if (aceCount > 1 && dealer.cardTotal < 12) {
+            dealer.cardTotal -= 10;
         }
     }
 }
-    
 
-function checkForBust(){
-    if(player.cardTotal > 21) {
+
+function checkForBust() {
+    if (player.cardTotal > 21) {
         msgEl.textContent = "YOU BUSTED! SORRY, DEALER WINS"
+        btn.style.pointerEvents = "none"
     }
-    if(dealer.cardTotal > 21) {
+    if (dealer.cardTotal > 21) {
         msgEl.textContent = "DEALER BUSTED! YOU WIN!"
+        btn.style.pointerEvents = "none"
     }
 }
-    
+
 function winOrLose() {
     if ((dealer.cardTotal > player.cardTotal) && (dealer.cardTotal <= 21)) {
         msgEl.textContent = "DEALER WINS"
+        btn.style.pointerEvents = "none"
     } else if ((player.cardTotal > dealer.cardTotal) && (player.cardTotal <= 21)) {
         msgEl.textContent = "YOU WIN!"
+        btn.style.pointerEvents = "none"
     } else if ((player.cardTotal === dealer.cardTotal) && (player.cardTotal <= 21) && (dealer.cardTotal <= 21)) {
         msgEl.textContent = "PUSH"
-    }   
-    
+        btn.style.pointerEvents = "none"
+    }
+
 }
 
 function newGame() {
-    console.log("HITINGs")
     document.location.reload(false);
 }
-    
-
-    
-    
-        
-
-        
-
-        
-        
-
-        
-
-
-
-            
-
-            
-
-            
-
-            
-
-
-
-
-        
-
-        
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-    
-  
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // if(player.cardTotal > 21 && player.currentHand[i].value{
-        // return ace === 11; 
-    // })){
-        // player.cardTotal -= 11;
-        // // msgEl.textContent = "YOU BUSTED, DEALER WINS!"
-        // console.log(player.cardTotal);
-        // return player.cardTotal;
-    //fix 
-    //win lose conditions:
-    //if player stands, dealer flips face down card. 
-    //if dealer hand is <= 16, dealer must hit.
-    //if dealer total is >= 17 && <= 21, dealer stands.
-    
-    //if dealer total > 21, player wins
-    
-    // ACE LOGIC: if player card total > 21 and player current hand contains an Ace then Ace value -10.
-    
+ //Pseudocode:       
+//When game starts, gameboard is empty
+//When user clicks deal, 2 cards dealt to player face up and 2 cards are dealt to dealer 1 face up and other face down
+//Depending on how close player is to 21, player will hit or stand
+//Player is dealt 1 card face up when hit button is clicked
+//When player clicks stand button, dealer will take turn
+//If dealer card total is 16 or less, dealer must take 1 card
+//
